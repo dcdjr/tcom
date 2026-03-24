@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -std=c11 -Wall -Werror -Wpedantic -Iinclude -g
 SRC = src/main.c src/cpu.c
-OBJ = $(SRC:.o=.c)
+OBJ = $(SRC:.c=.o)
 TARGET = tcom
 
 all: $(TARGET)
