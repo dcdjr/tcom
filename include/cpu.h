@@ -15,5 +15,6 @@ typedef struct {
 } CPU;
 
 void cpu_init(CPU *cpu);
+void cpu_dump(const CPU *cpu);
 
 #endif

@@ -7,5 +7,7 @@ int main(void) {
 
     cpu_init(&cpu);
 
+    cpu_dump(&cpu);
+
     return 0;
 }
