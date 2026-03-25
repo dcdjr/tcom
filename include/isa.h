@@ -14,4 +14,12 @@ typedef enum {
     ADD
 } Opcode;
 
+// Define register values
+typedef enum {
+    R0,
+    R1,
+    R2,
+    R3
+} Register;
+
 #endif

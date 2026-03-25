@@ -1,6 +1,7 @@
 #ifndef CPU_H
 #define CPU_H
 
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include "isa.h"
@@ -16,5 +17,8 @@ typedef struct {
 
 void cpu_init(CPU *cpu);
 void cpu_dump(const CPU *cpu);
+bool cpu_load_program(CPU *cpu, const uint8_t *program, size_t program_size);
+bool cpu_step(CPU *cpu);
+bool cpu_run(CPU *cpu);
 
 #endif
