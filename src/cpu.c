@@ -68,6 +68,11 @@ bool cpu_step(CPU *cpu) {
             cpu->zf = (cpu->regs[operand1] == 0) ? 1 : 0;
             cpu->pc += INSTRUCTION_WIDTH;
             break;
+        case SUB:
+            cpu->regs[operand1] -= cpu->regs[operand2];
+            cpu->zf = (cpu->regs[operand1] == 0) ? 1 : 0;
+            cpu->pc += INSTRUCTION_WIDTH;
+            break;
         default:
             break;
     }

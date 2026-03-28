@@ -8,10 +8,11 @@
 
 // Define opcodes
 typedef enum {
-    NOP,
+    NOP = 1,
     HALT,
     LOADI,
-    ADD
+    ADD,
+    SUB
 } Opcode;
 
 // Define register values

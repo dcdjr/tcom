@@ -1,5 +1,5 @@
 *.sh
 spec.md
 tcom
-*.txt
-
+*txt
+*.o
