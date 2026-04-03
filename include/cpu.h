@@ -11,7 +11,8 @@ typedef struct {
     uint8_t regs[NUM_REGS];
     uint8_t memory[NUM_MEMORY_BYTES];
     uint8_t pc; // Program counter
-    uint8_t zf; // Zero flag
+    size_t program_size; // Current loaded program size
+    bool zf; // Zero flag
     bool halted;
 } CPU;
 
