@@ -1,5 +1,6 @@
 *.sh
 spec.md
+*.py
 tcom
 *txt
 *.o
