@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <inttypes.h>
+
 #include "cpu.h"
 #include "isa.h"
 
@@ -37,6 +38,7 @@ void cpu_dump(const CPU *cpu) {
     printf("----------------------\n");
 }
 
+// Loads program into CPU's memory
 bool cpu_load_program(CPU *cpu, const uint8_t *program, size_t program_size) {
     if (!cpu) return false;
     if (!program) return false;
@@ -50,6 +52,7 @@ bool cpu_load_program(CPU *cpu, const uint8_t *program, size_t program_size) {
     return true;
 }
 
+// Advances program counter safely
 static bool advance_pc(CPU *cpu) {
     size_t next_pc = (size_t)cpu->pc + INSTRUCTION_WIDTH;
     if (next_pc >= cpu->program_size) return false;
@@ -57,15 +60,17 @@ static bool advance_pc(CPU *cpu) {
     return true;
 }
 
+// Executes one step of the CPU
 bool cpu_step(CPU *cpu) {
     if (!cpu) return false;
     if (cpu->halted) return false;
 
+    // Fetch
     Opcode opcode = cpu->memory[cpu->pc];
 
     uint8_t operand1;
     uint8_t operand2;
-
+    
     if (cpu->pc + INSTRUCTION_WIDTH <= cpu->program_size) {
         operand1 = cpu->memory[cpu->pc + 1];
         operand2 = cpu->memory[cpu->pc + 2];
@@ -73,6 +78,7 @@ bool cpu_step(CPU *cpu) {
         return false;
     }
     
+    // Decode & Execute
     switch (opcode) {
         case NOP:
             if (!advance_pc(cpu)) return false;
@@ -126,7 +132,7 @@ bool cpu_step(CPU *cpu) {
         case CMP:
             if (operand1 >= NUM_REGS) return false;
             if (operand2 >= NUM_REGS) return false;
-            cpu->zf = (operand1 == operand2);
+            cpu->zf = (cpu->regs[operand1] == cpu->regs[operand2]);
             if (!advance_pc(cpu)) return false;
             break;
         default:
@@ -137,6 +143,8 @@ bool cpu_step(CPU *cpu) {
     return true;
 }
 
+/* Fully runs a program loaded in CPU's memory, displays
+   step number and CPU dump for each step. */
 bool cpu_run(CPU *cpu) {
     if (!cpu) return false;
 

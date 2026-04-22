@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+
 #include "isa.h"
 
 // Structure to hold CPU data
