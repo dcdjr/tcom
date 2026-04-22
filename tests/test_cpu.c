@@ -131,7 +131,7 @@ static const uint8_t test_cmp_not_equal[] = {
     LOADI, R0, 8,
     LOADI, R1, 5,
     CMP,   R0, R1,
-    JZ,    15, 0,
+    JZ,    12, 0,
     HALT,  0,  0
 };
 

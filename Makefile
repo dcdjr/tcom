@@ -19,8 +19,8 @@ src/%.o: src/%.c include/cpu.h include/isa.h
 run: $(TARGET)
 	./$(TARGET)
 
-$(TEST_TARGET): $(TEST_SRC) include/cpu.h include/isa.h
-	$(CC) $(CFLAGS) $(TEST_SRC) -o $(TEST_TARGET)
+$(TEST_TARGET): $(TEST_SRC) include/cpu.h include/isa.h src/cpu.c
+	$(CC) $(CFLAGS) $(TEST_SRC) src/cpu.c -o $(TEST_TARGET)
 
 test: $(TEST_TARGET)
 	./$(TEST_TARGET)

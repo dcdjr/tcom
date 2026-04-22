@@ -55,7 +55,9 @@ bool cpu_load_program(CPU *cpu, const uint8_t *program, size_t program_size) {
 // Advances program counter safely
 static bool advance_pc(CPU *cpu) {
     size_t next_pc = (size_t)cpu->pc + INSTRUCTION_WIDTH;
-    if (next_pc >= cpu->program_size) return false;
+
+    if (next_pc > cpu->program_size - INSTRUCTION_WIDTH) return false;
+
     cpu->pc = (uint8_t)next_pc;
     return true;
 }

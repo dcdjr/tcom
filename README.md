@@ -1,12 +1,10 @@
 # tcom
 
-tcom is a tiny 8-bit computer emulator written in C. I built it as a low-level systems project to better understand how a very small CPU can represent state, execute instructions, handle control flow, and work with memory.
+tcom is a small 8-bit computer emulator written in C that models the core parts of a simple CPU, including registers, memory, instruction decoding, branching, and flag-based execution. I built it as a systems project to better understand how low-level machine behavior is represented in software.
 
-The goal of the project is not to simulate a real commercial processor in detail, but to build a clean, deliberate miniature machine with a simple instruction set and clear execution rules.
+## Overview
 
-## What tcom includes
-
-tcom currently supports:
+The emulator implements a compact instruction set architecture with:
 
 - 4 general-purpose 8-bit registers
 - 256 bytes of memory
@@ -14,27 +12,116 @@ tcom currently supports:
 - a zero flag
 - a halt state
 - fixed-width 3-byte instructions
-- arithmetic operations
-- control flow instructions
-- memory load/store instructions
-- register comparison through `CMP`
 
-## CPU model
+The project supports arithmetic, control flow, memory access, and register comparison, making it large enough to demonstrate real ISA and execution-model design while still being small enough to reason about completely.
 
-The CPU stores:
+## Instruction Set
 
-- `regs[4]` for the four registers
-- `memory[256]` for all addressable memory
-- `pc` for the program counter
-- `program_size` for the size of the currently loaded program
-- `zf` for the zero flag
-- `halted` to indicate whether execution has stopped
+tcom currently supports the following instructions:
 
-This is a very small machine, but it still has the same core pieces as a more serious CPU model: state, memory, instruction decoding, and an execution loop.
+- `NOP`
+- `HALT`
+- `LOADI`
+- `ADD`
+- `SUB`
+- `JMP`
+- `JZ`
+- `LOAD`
+- `STORE`
+- `CMP`
 
-## Instruction format
+Each instruction is encoded as:
 
-Every instruction in tcom is exactly 3 bytes wide:
-
-```c
+```text
 [ opcode ][ operand1 ][ operand2 ]
+```
+
+Because the ISA uses fixed-width 3-byte instructions, all valid jump targets must align to instruction boundaries.
+
+## Execution Model
+
+Programs are loaded into memory with `cpu_load_program()` and executed through `cpu_step()` or `cpu_run()`.
+
+The emulator uses a simple fetch-decode-execute cycle and enforces several deliberate invariants:
+
+- code occupies memory range `[0, program_size)`
+- data occupies memory range `[program_size, 255]`
+- `LOAD` and `STORE` cannot access the code region
+- jumps must remain within the loaded program and target valid instruction boundaries
+- non-jump instructions advance the program counter explicitly
+- valid programs are expected to end with `HALT`
+
+## Flags
+
+tcom currently uses a single status flag:
+
+- `zf` (zero flag)
+
+The zero flag is updated by:
+
+- `LOADI`
+- `ADD`
+- `SUB`
+- `CMP`
+
+`LOAD` and `STORE` do not affect flags.
+
+## Example Program
+
+```text
+LOADI R0, 3
+LOADI R1, 4
+LOADI R2, 5
+ADD   R0, R1
+SUB   R0, R2
+HALT
+```
+
+This program computes:
+
+```text
+R0 = (3 + 4) - 5 = 2
+```
+
+## Testing
+
+The project includes a dedicated test suite in `tests/test_cpu.c` covering:
+
+- arithmetic execution
+- unconditional and conditional jumps
+- memory load/store behavior
+- comparison behavior
+- invalid jump targets
+- invalid writes into the code region
+
+Run the tests with:
+
+```bash
+make test
+```
+
+## Why This Project Matters
+
+tcom was built to demonstrate practical understanding of:
+
+- instruction encoding
+- register vs. memory semantics
+- CPU state management
+- branching and control flow
+- flag-driven execution
+- deliberate memory-model constraints
+
+Although the machine is intentionally minimal, the design process reflects real systems concerns: defining an ISA, enforcing invariants, validating execution behavior, and proving correctness through targeted tests.
+
+## Build
+
+```bash
+make
+```
+
+## Run
+
+```bash
+make run
+```
+
