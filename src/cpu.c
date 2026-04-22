@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include "cpu.h"
+#include "isa.h"
 
 // Initializes CPU
 void cpu_init(CPU *cpu) {
@@ -97,6 +98,35 @@ bool cpu_step(CPU *cpu) {
             if (operand2 >= NUM_REGS) return false;
             cpu->regs[operand1] -= cpu->regs[operand2];
             cpu->zf = (cpu->regs[operand1] == 0);
+            if (!advance_pc(cpu)) return false;
+            break;
+        case JMP:
+            if (operand1 >= cpu->program_size) return false;
+            if (operand1 % INSTRUCTION_WIDTH != 0) return false;
+            cpu->pc = operand1;
+            break;
+        case JZ:
+            if (operand1 >= cpu->program_size) return false;
+            if (operand1 % INSTRUCTION_WIDTH != 0) return false;
+            if (cpu->zf == true) cpu->pc = operand1;
+            else if (!advance_pc(cpu)) return false;
+            break;
+        case LOAD:
+            if (operand1 >= NUM_REGS) return false;
+            if (operand2 >= NUM_MEMORY_BYTES || operand2 < cpu->program_size) return false;
+            cpu->regs[operand1] = cpu->memory[operand2];
+            if (!advance_pc(cpu)) return false;
+            break;
+        case STORE:
+            if (operand1 >= NUM_REGS) return false;
+            if (operand2 >= NUM_MEMORY_BYTES || operand2 < cpu->program_size) return false;
+            cpu->memory[operand2] = cpu->regs[operand1];
+            if (!advance_pc(cpu)) return false;
+            break;
+        case CMP:
+            if (operand1 >= NUM_REGS) return false;
+            if (operand2 >= NUM_REGS) return false;
+            cpu->zf = (operand1 == operand2);
             if (!advance_pc(cpu)) return false;
             break;
         default:

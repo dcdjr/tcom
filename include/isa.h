@@ -12,7 +12,12 @@ typedef enum {
     HALT,
     LOADI,
     ADD,
-    SUB
+    SUB,
+    JMP,
+    JZ,
+    LOAD,
+    STORE,
+    CMP
 } Opcode;
 
 // Define register values
