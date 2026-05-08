@@ -1,6 +1,8 @@
-# tcom
+# TCOM
 
-tcom is a small 8-bit computer emulator written in C that models the core parts of a simple CPU, including registers, memory, instruction decoding, branching, and flag-based execution. I built it as a systems project to better understand how low-level machine behavior is represented in software.
+TCOM is a small 8-bit computer emulator written in C. It models the core parts of a simple CPU, including registers, memory, instruction decoding, branching, and flag-based execution.
+
+The project was built to make low-level machine behavior concrete: how instructions are encoded, how CPU state changes over time, and how a small instruction set can be tested systematically.
 
 ## Overview
 
@@ -8,16 +10,16 @@ The emulator implements a compact instruction set architecture with:
 
 - 4 general-purpose 8-bit registers
 - 256 bytes of memory
-- a program counter
-- a zero flag
-- a halt state
-- fixed-width 3-byte instructions
+- A program counter
+- A zero flag
+- A halt state
+- Fixed-width 3-byte instructions
 
 The project supports arithmetic, control flow, memory access, and register comparison, making it large enough to demonstrate real ISA and execution-model design while still being small enough to reason about completely.
 
 ## Instruction Set
 
-tcom currently supports the following instructions:
+TCOM currently supports:
 
 - `NOP`
 - `HALT`
@@ -42,20 +44,21 @@ Because the ISA uses fixed-width 3-byte instructions, all valid jump targets mus
 
 Programs are loaded into memory with `cpu_load_program()` and executed through `cpu_step()` or `cpu_run()`.
 
-The emulator uses a simple fetch-decode-execute cycle and enforces several deliberate invariants:
+The emulator enforces several deliberate invariants:
 
-- code occupies memory range `[0, program_size)`
-- data occupies memory range `[program_size, 255]`
+- Code occupies memory range `[0, program_size)`
+- Data occupies memory range `[program_size, 255]`
 - `LOAD` and `STORE` cannot access the code region
-- jumps must remain within the loaded program and target valid instruction boundaries
-- non-jump instructions advance the program counter explicitly
-- valid programs are expected to end with `HALT`
+- Jumps must remain within the loaded program
+- Jump targets must align to instruction boundaries
+- Non-jump instructions advance the program counter explicitly
+- Valid programs are expected to end with `HALT`
 
 ## Flags
 
-tcom currently uses a single status flag:
+TCOM currently uses a single status flag:
 
-- `zf` (zero flag)
+- `zf` — zero flag
 
 The zero flag is updated by:
 
@@ -87,31 +90,18 @@ R0 = (3 + 4) - 5 = 2
 
 The project includes a dedicated test suite in `tests/test_cpu.c` covering:
 
-- arithmetic execution
-- unconditional and conditional jumps
-- memory load/store behavior
-- comparison behavior
-- invalid jump targets
-- invalid writes into the code region
+- Arithmetic execution
+- Unconditional and conditional jumps
+- Memory load/store behavior
+- Comparison behavior
+- Invalid jump targets
+- Invalid writes into the code region
 
 Run the tests with:
 
 ```bash
 make test
 ```
-
-## Why This Project Matters
-
-tcom was built to demonstrate practical understanding of:
-
-- instruction encoding
-- register vs. memory semantics
-- CPU state management
-- branching and control flow
-- flag-driven execution
-- deliberate memory-model constraints
-
-Although the machine is intentionally minimal, the design process reflects real systems concerns: defining an ISA, enforcing invariants, validating execution behavior, and proving correctness through targeted tests.
 
 ## Build
 
@@ -125,3 +115,16 @@ make
 make run
 ```
 
+## Why This Project Matters
+
+TCOM demonstrates practical understanding of:
+
+- Instruction encoding
+- Register versus memory semantics
+- CPU state management
+- Branching and control flow
+- Flag-driven execution
+- Deliberate memory-model constraints
+- Targeted correctness testing
+
+Although the machine is intentionally minimal, the design process reflects real systems concerns: defining an ISA, enforcing invariants, validating execution behavior, and proving correctness through tests.
